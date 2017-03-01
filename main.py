@@ -21,8 +21,17 @@ class BlogHandler(webapp2.RequestHandler):
         """
 
         # TODO - filter the query so that only posts by the given user
-        return None
+        # use the filter post from the last studio
+        #return None
+        query = Post.all().order('-created')
+        query = query.filter("author", user)
+        return query.fetch(limit=limit, offset=offset)
 
+# query = Post.all().filter("author", user).order('-created')
+# return query.fetch(limit=limit, offset=offset)
+
+        # query = query.filter("author", User)
+        # query = Post.all().filter("author", self.user)
     def get_user_by_name(self, username):
         """ Get a user object from the db, based on their username """
         user = db.GqlQuery("SELECT * FROM User WHERE username = '%s'" % username)
@@ -66,6 +75,7 @@ class IndexHandler(BlogHandler):
         """ List all blog users """
         users = User.all()
         t = jinja_env.get_template("index.html")
+        # note remove single quoter in front of users because was getting error
         response = t.render(users = users)
         self.response.write(response)
 
